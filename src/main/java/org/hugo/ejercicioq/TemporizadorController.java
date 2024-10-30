@@ -1,88 +1,102 @@
 package org.hugo.ejercicioq;
 
-import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
-
 import java.util.Timer;
 import java.util.TimerTask;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.application.Platform;
 
-public class TemporizadorController extends AnchorPane {
-    private BooleanProperty fin;
-    private int segundos;
+/**
+ * Controlador de la interfaz FXML para gestionar un temporizador.
+ * Se encarga de actualizar los labels que muestran los minutos y segundos restantes.
+ */
+public class TemporizadorController extends GridPane {
+
+    @FXML
+    private Label lbl_min_derecha;
+
+    @FXML
+    private Label lbl_min_izquierda;
+
+    @FXML
+    private Label lbl_seg_derecha;
+
+    @FXML
+    private Label lbl_seg_izquierda;
+
+    private int tiempo;
     private Timer timer;
+    private BooleanProperty fin;
 
-    @FXML
-    private Label min1;
-
-    @FXML
-    private Label min2;
-
-    @FXML
-    private Label seg1;
-
-    @FXML
-    private Label seg2;
-
+    /**
+     * Constructor de la clase TemporizadorController.
+     * Inicializa la propiedad fin para indicar si el temporizador ha terminado.
+     */
     public TemporizadorController() {
-        this.fin = new SimpleBooleanProperty(false);
-        this.segundos = -1;
+        fin = new SimpleBooleanProperty(false);
     }
-    public boolean setSegundos(int segundos) {
-        if (segundos >= 60) {
-            int minutos = (int) (segundos / 60);
-            if (minutos < 100) {
-                this.segundos = segundos;
-                return true;
-            }
-        } else {
-            if (segundos > 0) {
-                this.segundos = segundos;
-                return true;
-            }
+
+    /**
+     * Establece el tiempo en segundos para el temporizador.
+     * Si el tiempo no es válido (menor a 1 minuto o mayor a 99 minutos), no se fija.
+     *
+     * @param tiempo Tiempo en segundos que se desea establecer en el temporizador.
+     */
+    public void fijarTiempo(int tiempo) {
+        int mins = tiempo / 60;
+        if (mins < 1 || mins > 99) {
+            return;
         }
-        return false;
+        this.tiempo = tiempo;
     }
 
-    public void iniciarTemporizaddor() {
-        if (this.segundos == -1) {
-            System.err.println("Error");
-        } else {
-            final int[] resto = {this.segundos};
-            timer = new Timer();
-            timer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    if (resto[0] < 0) {
-                        timer.cancel();
-                        Platform.runLater(() -> fin.set(true)); // Actualizar la propiedad fin para indicar que el temporizador ha terminado
-                        return;
-                    }
-                    int mins = resto[0] / 60;
-                    int mins1 = mins / 10;
-                    int mins2 = mins % 10;
-                    int segs = resto[0] % 60;
-                    int segs1 = segs / 10;
-                    int segs2 = segs % 10;
-
-                    Platform.runLater(() -> {
-                        min1.setText(mins1 + "");
-                        min2.setText(mins2 + "");
-                        seg1.setText(segs1 + "");
-                        seg2.setText(segs2 + "");
-                    });
-                    resto[0] -= 1;
+    /**
+     * Inicia el temporizador y actualiza cada segundo los labels con los minutos
+     * y segundos restantes. Cuando el tiempo llega a cero, establece la propiedad
+     * fin a true y detiene el temporizador.
+     */
+    public void iniciarTemporizador() {
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (tiempo == 0) {
+                    Platform.runLater(() -> fin.set(true));
+                    detenerTemporizador();
                 }
-            }, 0, 1000);
+                int mins = tiempo / 60;
+                int segs = tiempo % 60;
+                Platform.runLater(() -> {
+                    lbl_min_izquierda.setText(mins / 10 + "");
+                    lbl_min_derecha.setText(mins % 10 + "");
+                    lbl_seg_izquierda.setText(segs / 10 + "");
+                    lbl_seg_derecha.setText(segs % 10 + "");
+                });
+                tiempo--;
+            }
+        }, 0, 1000);
+    }
+
+    /**
+     * Detiene el temporizador si está en ejecución.
+     * Cancela y limpia el Timer.
+     */
+    public void detenerTemporizador() {
+        if (timer != null) {
+            timer.cancel();
+            timer.purge();
         }
     }
 
-
-    public BooleanProperty finProperty() {
+    /**
+     * Devuelve la propiedad BooleanProperty que indica si el temporizador ha terminado.
+     *
+     * @return Propiedad BooleanProperty que indica el estado final del temporizador.
+     */
+    public BooleanProperty getFin() {
         return fin;
     }
-
 }
