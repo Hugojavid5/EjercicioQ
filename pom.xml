@@ -75,7 +75,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>org.hugo.ejercicioq/org.hugo.ejercicioq.HelloApplication</mainClass>
+                            <mainClass>org.hugo.ejercicioq/org.hugo.ejercicioq.AppTemporizador</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>

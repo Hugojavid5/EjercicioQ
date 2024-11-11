@@ -11,7 +11,7 @@ import java.io.IOException;
  * Clase principal de la aplicación JavaFX que carga la interfaz definida en el archivo FXML
  * y muestra una ventana con un temporizador.
  */
-public class HelloApplication extends Application {
+public class AppTemporizador extends Application {
 
     /**
      * Método start que se ejecuta al iniciar la aplicación.
@@ -22,7 +22,7 @@ public class HelloApplication extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("EjercicioQ.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(AppTemporizador.class.getResource("EjercicioQ.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 320, 240);
         stage.setTitle("Temporizador");
         stage.setScene(scene);
